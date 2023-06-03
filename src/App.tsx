@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil'
 import Footer from './Layout/Footer'
 import Header from './Layout/Header'
 import Home from './pages/Home'
+import Login from './pages/Login'
 import Register from './pages/Register'
 
 const App = () => {
@@ -20,6 +21,10 @@ const App = () => {
         <Route
           path="/register"
           element={<Register />}
+        />
+        <Route
+          path="/login"
+          element={<Login />}
         />
       </Routes>
       <Footer />

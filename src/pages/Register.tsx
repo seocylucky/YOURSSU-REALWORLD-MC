@@ -33,6 +33,11 @@ const Register = () => {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    const temp = {
+      username: '',
+      email: '',
+      password: '',
+    }
     axios
       .post('https://api.realworld.io/api/users', {
         user: {
@@ -66,15 +71,16 @@ const Register = () => {
           const errData = err.response.data.errors
           const errKey = Object.keys(errData)
           if (errKey.includes('username')) {
-            setError({ ...error, username: errData['username'][0] })
+            temp.username = errData['username'][0]
           }
           if (errKey.includes('email')) {
-            setError({ ...error, email: errData['email'][0] })
+            temp.email = errData['email'][0]
           }
           if (errKey.includes('password')) {
-            setError({ ...error, password: errData['password'][0] })
+            temp.password = errData['password'][0]
           }
         }
+        setError(temp)
       })
   }
 
