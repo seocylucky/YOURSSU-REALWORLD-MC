@@ -65,7 +65,7 @@ const Header = () => {
                     <img
                       src={user?.image}
                       alt={user?.image}
-                      height="26px"
+                      className="user-pic"
                     />
                     {user?.username}
                   </div>

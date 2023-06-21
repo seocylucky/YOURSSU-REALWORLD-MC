@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import axios from 'axios'
 import { Cookies } from 'react-cookie'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 
 import { UserState } from '../State/userState'
@@ -87,7 +87,7 @@ const Login = () => {
           <div className="col-md-6 offset-md-3 col-xs-12">
             <h1 className="text-xs-center">Sign in</h1>
             <p className="text-xs-center">
-              <a href="">Need an account?</a>
+              <Link to="/register">Need an account?</Link>
             </p>
 
             <ul className="error-messages">

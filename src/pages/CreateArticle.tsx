@@ -51,3 +51,5 @@ const CreateArticle = () => {
     </div>
   )
 }
+
+export default CreateArticle
