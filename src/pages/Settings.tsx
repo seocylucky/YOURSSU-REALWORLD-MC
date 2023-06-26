@@ -65,7 +65,7 @@ const Settings = () => {
       .catch((err) => {
         console.log(err.data)
       })
-    navigate(`/@/:${user?.username}`)
+    navigate(`/${user?.username}`)
   }
 
   return (

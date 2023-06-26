@@ -1,6 +1,123 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+
+import axios from 'axios'
+import { Cookies } from 'react-cookie'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
+
+import ArticleItem from '@/components/ArticleItem'
+
+import { UserState } from '../State/userState'
+import { Article } from '../Types/articles'
 
 const Profile = () => {
+  const { username } = useParams()
+  // const [username] = useState(useParams().username)
+  // console.log(useParams().username)
+  // console.log(username)
+  const [mode, setMode] = useState('My Articles')
+  const [currentUser] = useRecoilState(UserState)
+  // const [loading, setLoading] = useState(false)
+  const [articles, setArticles] = useState<Article[]>([])
+  const navigate = useNavigate()
+  const [userInfo, setUserInfo] = useState({
+    username: '',
+    bio: '',
+    image: '',
+    following: false,
+  })
+  const cookie = new Cookies()
+  /* useEffect(() => {
+    const temp = username?.replace('@', '')
+    console.log(temp)
+    setUsername(temp)
+  }, [username]) */
+
+  useEffect(() => {
+    axios
+      .get(`https://api.realworld.io/api/profiles/${username}`, {
+        headers: {
+          Authorization: `Bearer ${cookie.get('token')}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.profile
+        console.log(data)
+        setUserInfo({
+          username: data.username,
+          bio: data.bio,
+          image: data.image,
+          following: data.following,
+        })
+      })
+  }, [])
+
+  useEffect(() => {
+    if (mode === 'My Articles') {
+      axios
+        .get(`https://api.realworld.io/api/articles?author=${username}`, {
+          headers: {
+            Authorization: `Bearer ${cookie.get('token')}`,
+          },
+        })
+        .then((res) => {
+          const data = res.data.articles
+          console.log(data)
+          setArticles(data)
+        })
+    } else {
+      axios
+        .get(`https://api.realworld.io/api/articles?favorited=${username}`, {
+          headers: {
+            Authorization: `Bearer ${cookie.get('token')}`,
+          },
+        })
+        .then((res) => {
+          const data = res.data.articles
+          console.log(data)
+          setArticles(data)
+        })
+    }
+  }, [mode])
+
+  const handleFollow = () => {
+    axios
+      .post(`https://api.realworld.io/api/profiles/${username}/follow`, null, {
+        headers: {
+          Authorization: `Bearer ${cookie.get('token')}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.profile
+        console.log(data)
+        setUserInfo({
+          username: data.username,
+          bio: data.bio,
+          image: data.image,
+          following: data.following,
+        })
+      })
+  }
+
+  const handleUnfollow = () => {
+    axios
+      .delete(`https://api.realworld.io/api/profiles/${username}/follow`, {
+        headers: {
+          Authorization: `Bearer ${cookie.get('token')}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.profile
+        console.log(data)
+        setUserInfo({
+          username: data.username,
+          bio: data.bio,
+          image: data.image,
+          following: data.following,
+        })
+      })
+  }
+
   return (
     <div className="profile-page">
       <div className="user-info">
@@ -8,106 +125,68 @@ const Profile = () => {
           <div className="row">
             <div className="col-xs-12 col-md-10 offset-md-1">
               <img
-                src="http://i.imgur.com/Qr71crq.jpg"
+                src={userInfo?.image}
                 className="user-img"
               />
-              <h4>Eric Simons</h4>
-              <p>
-                Cofounder @GoThinkster, lived in Aol&#39;s HQ for a few months, kinda looks like
-                Peeta from the Hunger Games
-              </p>
-              <button className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-plus-round"></i>
-                &nbsp; Follow Eric Simons
-              </button>
+              <h4>{userInfo.username}</h4>
+              <p>{userInfo?.bio}</p>
+              {currentUser?.username === userInfo.username ? (
+                <button
+                  className="btn btn-sm btn-outline-secondary action-btn"
+                  onClick={() => navigate('/settings')}
+                >
+                  <i className="ion-gear-a"></i>
+                  &nbsp; Edit Profile Settings
+                </button>
+              ) : userInfo.following === false ? (
+                <button
+                  className="btn btn-sm btn-outline-secondary action-btn"
+                  onClick={handleFollow}
+                >
+                  <i className="ion-plus-round"></i>
+                  &nbsp; Follow {userInfo.username}
+                </button>
+              ) : (
+                <button
+                  className="btn btn-sm btn-outline-secondary action-btn"
+                  onClick={handleUnfollow}
+                >
+                  <i className="ion-plus-round"></i>
+                  &nbsp; Unfollow {userInfo.username}
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
-
       <div className="container">
         <div className="row">
           <div className="col-xs-12 col-md-10 offset-md-1">
             <div className="articles-toggle">
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
-                  <a
-                    className="nav-link active"
-                    href=""
+                  <div
+                    className={`nav-link ${mode === 'My Articles' ? 'active' : null}`}
+                    onClick={() => {
+                      setMode('My Articles')
+                    }}
                   >
                     My Articles
-                  </a>
+                  </div>
                 </li>
                 <li className="nav-item">
-                  <a
-                    className="nav-link"
-                    href=""
+                  <div
+                    className={`nav-link ${mode === 'Favorited Articles' ? 'active' : null}`}
+                    onClick={() => {
+                      setMode('Favorited Articles')
+                    }}
                   >
                     Favorited Articles
-                  </a>
+                  </div>
                 </li>
               </ul>
             </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <a
-                    href=""
-                    className="author"
-                  >
-                    Eric Simons
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart"></i> 29
-                </button>
-              </div>
-              <a
-                href=""
-                className="preview-link"
-              >
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div className="info">
-                  <a
-                    href=""
-                    className="author"
-                  >
-                    Albert Pai
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart"></i> 32
-                </button>
-              </div>
-              <a
-                href=""
-                className="preview-link"
-              >
-                <h1>The song you won&#39;t ever stop singing. No matter how hard you try.</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-                <ul className="tag-list">
-                  <li className="tag-default tag-pill tag-outline">Music</li>
-                  <li className="tag-default tag-pill tag-outline">Song</li>
-                </ul>
-              </a>
-            </div>
+            <ArticleItem articles={articles} />
           </div>
         </div>
       </div>

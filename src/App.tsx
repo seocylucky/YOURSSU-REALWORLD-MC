@@ -38,7 +38,7 @@ const App = () => {
           element={<Settings />}
         />
         <Route
-          path="/@/:username"
+          path="/:username"
           element={<Profile />}
         />
       </Routes>
