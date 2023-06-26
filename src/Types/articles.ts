@@ -1,4 +1,4 @@
-export interface Article {
+export interface GetArticleResponse {
   slug: string
   title: string
   description: string
@@ -14,4 +14,11 @@ export interface Article {
     image: string
     following: true
   }
+}
+
+export interface PostArticleRequest {
+  title: string
+  description: string
+  body: string
+  tagList: string[]
 }
