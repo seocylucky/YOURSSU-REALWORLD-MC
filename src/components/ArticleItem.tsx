@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { Article } from '../Types/articles'
+import { GetArticleResponse } from '../Types/articles'
 
 type MyArticlesProps = {
-  articles: Article[]
+  articles: GetArticleResponse[]
 }
 
 // 아티클 보여주는 공용 컴포넌트
@@ -14,7 +14,7 @@ const ArticleItem = ({ articles }: MyArticlesProps) => {
         <div className="article-preview">No articles are here... yet.</div>
       )}
       {articles &&
-        articles.map((article: Article) => (
+        articles.map((article: GetArticleResponse) => (
           <div
             className="article-preview"
             key={article.slug}

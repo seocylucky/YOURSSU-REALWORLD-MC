@@ -8,7 +8,7 @@ import { useRecoilState } from 'recoil'
 import ArticleItem from '@/components/ArticleItem'
 
 import { UserState } from '../State/userState'
-import { Article } from '../Types/articles'
+import { GetArticleResponse } from '../Types/articles'
 
 const Profile = () => {
   const { username } = useParams()
@@ -18,7 +18,7 @@ const Profile = () => {
   const [mode, setMode] = useState('My Articles')
   const [currentUser] = useRecoilState(UserState)
   // const [loading, setLoading] = useState(false)
-  const [articles, setArticles] = useState<Article[]>([])
+  const [articles, setArticles] = useState<GetArticleResponse[]>([])
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({
     username: '',
