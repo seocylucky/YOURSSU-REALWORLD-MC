@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import axios from 'axios'
 import { Cookies } from 'react-cookie'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import { PostArticleRequest } from '@/Types/articles'
 
 const CreateArticle = () => {
+  const { slug } = useParams()
   const [newArticle, setNewArticle] = useState<PostArticleRequest>({
     title: '',
     description: '',
@@ -21,6 +22,26 @@ const CreateArticle = () => {
   const cookie = new Cookies()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (slug) {
+      axios
+        .get(`https://api.realworld.io/api/articles/${slug}`, {
+          headers: {
+            Authorization: `Bearer ${cookie.get('token')}`,
+          },
+        })
+        .then((res) => {
+          const data = res.data.article
+          setNewArticle({
+            title: data.title,
+            description: data.description,
+            body: data.body,
+            tagList: data.tagList,
+          })
+        })
+    }
+  }, [])
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -33,7 +54,7 @@ const CreateArticle = () => {
     setNewArticle({ ...newArticle, tagList: deletedTaglist })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
     axios
       .post(
@@ -61,6 +82,34 @@ const CreateArticle = () => {
       })
   }
 
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault()
+    axios
+      .put(
+        `https://api.realworld.io/api/articles/${slug}`,
+        {
+          article: newArticle,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookie.get('token')}`,
+          },
+        }
+      )
+      .then((res) => {
+        setError({ key: '', value: '' })
+        navigate(`/article/${res.data.article.slug}`)
+      })
+      .catch((err) => {
+        if (err.response.status === 422) {
+          const errData = err.response.data.errors
+          const errKey: string[] = Object.keys(errData)
+          const errValue: string[] = Object.values(errData)
+          setError({ key: errKey[0], value: errValue[0] })
+        }
+      })
+  }
+
   return (
     <div className="editor-page">
       <div className="container page">
@@ -69,7 +118,7 @@ const CreateArticle = () => {
             <ul className="error-messages">
               {error.key !== '' ? <li>{`${error.key} ${error.value}`}</li> : null}
             </ul>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={slug ? handleUpdate : handleCreate}>
               <fieldset>
                 <fieldset className="form-group">
                   <input

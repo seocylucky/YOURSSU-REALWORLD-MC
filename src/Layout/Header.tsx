@@ -40,8 +40,11 @@ const Header = () => {
             </li>
             <li className="nav-item">
               <Link
-                className={`nav-link ${location.pathname === '/editor' ? 'active' : null}`}
+                className={`nav-link ${location.pathname.includes('/editor') ? 'active' : null}`}
                 to="/editor"
+                onClick={(e) => {
+                  if (location.pathname.includes('/editor')) e.preventDefault()
+                }}
               >
                 {' '}
                 <i className="ion-compose"></i>&nbsp;New Article{' '}

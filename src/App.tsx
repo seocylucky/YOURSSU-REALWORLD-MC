@@ -5,6 +5,7 @@ import { RecoilRoot } from 'recoil'
 
 import Footer from './Layout/Footer'
 import Header from './Layout/Header'
+import Article from './pages/Article'
 import CreateArticle from './pages/CreateArticle'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -32,6 +33,14 @@ const App = () => {
         <Route
           path="/editor"
           element={<CreateArticle />}
+        />
+        <Route
+          path="/editor/:slug"
+          element={<CreateArticle />}
+        />
+        <Route
+          path="/article/:slug"
+          element={<Article />}
         />
         <Route
           path="/settings"
