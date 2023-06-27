@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { Link } from 'react-router-dom'
+
 import { GetArticleResponse } from '../Types/articles'
 
 type MyArticlesProps = {
@@ -42,14 +44,14 @@ const ArticleItem = ({ articles }: MyArticlesProps) => {
                 <i className="ion-heart"></i> {article.favoritesCount}
               </button>
             </div>
-            <a
-              href=""
+            <Link
+              to={`/article/${article.slug}`}
               className="preview-link"
             >
               <h1>{article.title}</h1>
               <p>{article.description}</p>
               <span>Read more...</span>
-            </a>
+            </Link>
           </div>
         ))}
     </div>
