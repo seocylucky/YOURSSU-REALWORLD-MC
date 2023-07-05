@@ -21,7 +21,6 @@ const Home = () => {
 
   useEffect(() => {
     axios.get('https://api.realworld.io/api/tags', {}).then((res) => {
-      console.log(res)
       setTags(res.data.tags)
     })
   }, [])
@@ -31,7 +30,6 @@ const Home = () => {
   }, [mode, offset])
 
   const handleArticle = () => {
-    console.log('handleArticle')
     if (mode === 'Your Feed') {
       axios
         .get(`https://api.realworld.io/api/articles/feed?limit=10&offset=${offset}`, {
@@ -41,7 +39,6 @@ const Home = () => {
         })
         .then((res) => {
           const data = res.data.articles
-          console.log(data)
           setArticles(data)
           setTotalPage(res.data.articlesCount)
         })
@@ -49,9 +46,7 @@ const Home = () => {
       axios
         .get(`https://api.realworld.io/api/articles?limit=10&offset=${offset}`, {})
         .then((res) => {
-          console.log(res.data.articles)
           setArticles(res.data.articles)
-          console.log(res.data.articlesCount)
           setTotalPage(res.data.articlesCount)
         })
     } else {

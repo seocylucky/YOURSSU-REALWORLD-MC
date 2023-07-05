@@ -11,7 +11,6 @@ const Header = () => {
   const [user] = useRecoilState(UserState)
 
   useEffect(() => {
-    console.log(user)
     if (user === undefined) {
       setIsLogined(false)
     } else {
@@ -59,21 +58,19 @@ const Header = () => {
                 <i className="ion-gear-a"></i>&nbsp;Settings{' '}
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 className={`nav-link ${
                   location.pathname === `/${user?.username}` ? 'active' : null
                 }`}
                 to={`/${user?.username}`}
               >
-                <div>
-                  <img
-                    src={user?.image}
-                    alt={user?.image}
-                    className="user-pic"
-                  />
-                  {user?.username}
-                </div>
+                <img
+                  src={user?.image}
+                  alt={user?.image}
+                  className="user-pic"
+                />
+                {user?.username}{' '}
               </Link>
             </li>
           </ul>

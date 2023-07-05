@@ -37,7 +37,6 @@ const Profile = () => {
         })
         .then((res) => {
           const data = res.data.articles
-          console.log(data)
           setArticles(data)
           setTotalPage(res.data.articlesCount)
         })
@@ -53,7 +52,6 @@ const Profile = () => {
         )
         .then((res) => {
           const data = res.data.articles
-          console.log(data)
           setArticles(data)
           setTotalPage(res.data.articlesCount)
         })
@@ -69,7 +67,6 @@ const Profile = () => {
       })
       .then((res) => {
         const data = res.data.profile
-        console.log(data)
         setUserInfo({
           username: data.username,
           bio: data.bio,
@@ -92,7 +89,6 @@ const Profile = () => {
       })
       .then((res) => {
         const data = res.data.profile
-        console.log(data)
         setUserInfo({
           username: data.username,
           bio: data.bio,
@@ -111,7 +107,6 @@ const Profile = () => {
       })
       .then((res) => {
         const data = res.data.profile
-        console.log(data)
         setUserInfo({
           username: data.username,
           bio: data.bio,
