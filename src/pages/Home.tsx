@@ -5,6 +5,7 @@ import { Cookies } from 'react-cookie'
 import { useRecoilState } from 'recoil'
 
 import ArticleItem from '@/components/ArticleItem'
+import Pagination from '@/components/Pagination'
 
 import { UserState } from '../State/userState'
 import { GetArticleResponse } from '../Types/articles'
@@ -14,6 +15,8 @@ const Home = () => {
   const [mode, setMode] = useState('Global Feed')
   const [tags, setTags] = useState<string[]>([])
   const [articles, setArticles] = useState<GetArticleResponse[]>([])
+  const [offset, setOffset] = useState<number>(0)
+  const [totalPage, setTotalPage] = useState<number>(0)
   const cookie = new Cookies()
 
   useEffect(() => {
@@ -25,13 +28,13 @@ const Home = () => {
 
   useEffect(() => {
     handleArticle()
-  }, [mode])
+  }, [mode, offset])
 
   const handleArticle = () => {
     console.log('handleArticle')
     if (mode === 'Your Feed') {
       axios
-        .get('https://api.realworld.io/api/articles/feed?limit=10', {
+        .get(`https://api.realworld.io/api/articles/feed?limit=10&offset=${offset}`, {
           headers: {
             Authorization: `Bearer ${cookie.get('token')}`,
           },
@@ -40,17 +43,24 @@ const Home = () => {
           const data = res.data.articles
           console.log(data)
           setArticles(data)
+          setTotalPage(res.data.articlesCount)
         })
     } else if (mode === 'Global Feed') {
-      axios.get('https://api.realworld.io/api/articles?limit=10', {}).then((res) => {
-        console.log(res.data.articles)
-        setArticles(res.data.articles)
-        console.log(res.data.articlesCount)
-      })
+      axios
+        .get(`https://api.realworld.io/api/articles?limit=10&offset=${offset}`, {})
+        .then((res) => {
+          console.log(res.data.articles)
+          setArticles(res.data.articles)
+          console.log(res.data.articlesCount)
+          setTotalPage(res.data.articlesCount)
+        })
     } else {
-      axios.get(`https://api.realworld.io/api/articles?tag=${mode}`, {}).then((res) => {
-        setArticles(res.data.articles)
-      })
+      axios
+        .get(`https://api.realworld.io/api/articles?tag=${mode}&offset=${offset}`, {})
+        .then((res) => {
+          setArticles(res.data.articles)
+          setTotalPage(res.data.articlesCount)
+        })
     }
   }
 
@@ -76,6 +86,7 @@ const Home = () => {
                       className={`nav-link ${mode === 'Your Feed' && 'active'}`}
                       onClick={() => {
                         setMode('Your Feed')
+                        setOffset(0)
                       }}
                     >
                       Your Feed
@@ -87,6 +98,7 @@ const Home = () => {
                     className={`nav-link ${mode === 'Global Feed' && 'active'}`}
                     onClick={() => {
                       setMode('Global Feed')
+                      setOffset(0)
                     }}
                   >
                     Global Feed
@@ -100,6 +112,7 @@ const Home = () => {
                       }`}
                       onClick={() => {
                         setMode('Global Feed')
+                        setOffset(0)
                       }}
                     >
                       <i className="ion-pound"></i>
@@ -113,6 +126,13 @@ const Home = () => {
                 handleArticle={handleArticle}
               />
             </div>
+            {totalPage > 10 && (
+              <Pagination
+                totalPage={totalPage}
+                offset={offset}
+                setOffset={setOffset}
+              />
+            )}
           </div>
 
           <div className="col-md-3">
