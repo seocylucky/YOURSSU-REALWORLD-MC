@@ -6,18 +6,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil'
 
 import ArticleItem from '@/components/ArticleItem'
+import Pagination from '@/components/Pagination'
 
 import { UserState } from '../State/userState'
 import { GetArticleResponse } from '../Types/articles'
 
 const Profile = () => {
   const { username } = useParams()
-  // const [username] = useState(useParams().username)
-  // console.log(useParams().username)
-  // console.log(username)
   const [mode, setMode] = useState('My Articles')
   const [currentUser] = useRecoilState(UserState)
-  // const [loading, setLoading] = useState(false)
+  const [offset, setOffset] = useState<number>(0)
+  const [totalPage, setTotalPage] = useState<number>(0)
   const [articles, setArticles] = useState<GetArticleResponse[]>([])
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({
@@ -27,11 +26,39 @@ const Profile = () => {
     following: false,
   })
   const cookie = new Cookies()
-  /* useEffect(() => {
-    const temp = username?.replace('@', '')
-    console.log(temp)
-    setUsername(temp)
-  }, [username]) */
+
+  const handleArticle = () => {
+    if (mode === 'My Articles') {
+      axios
+        .get(`https://api.realworld.io/api/articles?author=${username}&limit=10&offset=${offset}`, {
+          headers: {
+            Authorization: `Bearer ${cookie.get('token')}`,
+          },
+        })
+        .then((res) => {
+          const data = res.data.articles
+          console.log(data)
+          setArticles(data)
+          setTotalPage(res.data.articlesCount)
+        })
+    } else {
+      axios
+        .get(
+          `https://api.realworld.io/api/articles?favorited=${username}&limit=10&offset=${offset}`,
+          {
+            headers: {
+              Authorization: `Bearer ${cookie.get('token')}`,
+            },
+          }
+        )
+        .then((res) => {
+          const data = res.data.articles
+          console.log(data)
+          setArticles(data)
+          setTotalPage(res.data.articlesCount)
+        })
+    }
+  }
 
   useEffect(() => {
     axios
@@ -53,32 +80,8 @@ const Profile = () => {
   }, [])
 
   useEffect(() => {
-    if (mode === 'My Articles') {
-      axios
-        .get(`https://api.realworld.io/api/articles?author=${username}`, {
-          headers: {
-            Authorization: `Bearer ${cookie.get('token')}`,
-          },
-        })
-        .then((res) => {
-          const data = res.data.articles
-          console.log(data)
-          setArticles(data)
-        })
-    } else {
-      axios
-        .get(`https://api.realworld.io/api/articles?favorited=${username}`, {
-          headers: {
-            Authorization: `Bearer ${cookie.get('token')}`,
-          },
-        })
-        .then((res) => {
-          const data = res.data.articles
-          console.log(data)
-          setArticles(data)
-        })
-    }
-  }, [mode])
+    handleArticle()
+  }, [mode, offset])
 
   const handleFollow = () => {
     axios
@@ -169,6 +172,7 @@ const Profile = () => {
                     className={`nav-link ${mode === 'My Articles' ? 'active' : null}`}
                     onClick={() => {
                       setMode('My Articles')
+                      setOffset(0)
                     }}
                   >
                     My Articles
@@ -179,6 +183,7 @@ const Profile = () => {
                     className={`nav-link ${mode === 'Favorited Articles' ? 'active' : null}`}
                     onClick={() => {
                       setMode('Favorited Articles')
+                      setOffset(0)
                     }}
                   >
                     Favorited Articles
@@ -186,8 +191,18 @@ const Profile = () => {
                 </li>
               </ul>
             </div>
-            <ArticleItem articles={articles} />
+            <ArticleItem
+              articles={articles}
+              handleArticle={handleArticle}
+            />
           </div>
+          {totalPage > 10 && (
+            <Pagination
+              totalPage={totalPage}
+              offset={offset}
+              setOffset={setOffset}
+            />
+          )}
         </div>
       </div>
     </div>
