@@ -22,3 +22,16 @@ export interface PostArticleRequest {
   body: string
   tagList: string[]
 }
+
+export interface CommentResponse {
+  id: number
+  createdAt: string
+  updatedAt: string
+  body: string
+  author: {
+    username: string
+    bio: string
+    image: string
+    following: true
+  }
+}
