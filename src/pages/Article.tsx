@@ -14,6 +14,7 @@ const Article = () => {
   const [isArticle, setIsArticle] = useState<GetArticleResponse | undefined>(undefined)
   const [currentUser] = useRecoilState(UserState)
   const [isAuthor, setIsAuthor] = useState(false)
+  const [user, setUser] = useRecoilState(UserState)
   const cookie = new Cookies()
   const navigate = useNavigate()
 
@@ -263,7 +264,16 @@ const Article = () => {
             )}
           </div>
         </div>
-        <Comment slug={slug} />
+        {user ? (
+          <Comment slug={slug} />
+        ) : (
+          <div className="col-xs-12 col-md-8 pffset-md-2">
+            <p style={{ display: 'inherit' }}>
+              <Link to="/login">Sign in</Link>&nbsp;or&nbsp;<Link to="/register">sign up</Link> to
+              add comments on this article.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )
