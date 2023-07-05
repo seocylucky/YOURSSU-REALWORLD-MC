@@ -41,7 +41,6 @@ const Login = () => {
         },
       })
       .then((res) => {
-        console.log(res)
         const cookie = new Cookies()
         const data = res.data.user
         const userData = {
@@ -60,7 +59,6 @@ const Login = () => {
         navigate('/')
       })
       .catch((err) => {
-        console.log(err)
         const errData = err.response.data.errors
         const errKey = Object.keys(errData)
         if (err.response.status === 422) {

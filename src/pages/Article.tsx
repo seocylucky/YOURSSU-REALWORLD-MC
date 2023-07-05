@@ -14,7 +14,7 @@ const Article = () => {
   const [isArticle, setIsArticle] = useState<GetArticleResponse | undefined>(undefined)
   const [currentUser] = useRecoilState(UserState)
   const [isAuthor, setIsAuthor] = useState(false)
-  const [user, setUser] = useRecoilState(UserState)
+  const [user] = useRecoilState(UserState)
   const cookie = new Cookies()
   const navigate = useNavigate()
 

@@ -19,7 +19,6 @@ const Comment = ({ slug }: CommentProps) => {
   const cookie = new Cookies()
 
   useEffect(() => {
-    console.log(slug)
     getComments()
   }, [])
 
@@ -31,7 +30,6 @@ const Comment = ({ slug }: CommentProps) => {
         },
       })
       .then((res) => {
-        console.log(res.data.comments)
         setCommentsArr(res.data.comments)
       })
   }

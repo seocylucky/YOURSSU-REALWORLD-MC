@@ -62,9 +62,6 @@ const Settings = () => {
         cookie.set('token', data.token)
         setUser(userData)
       })
-      .catch((err) => {
-        console.log(err.data)
-      })
     navigate(`/${user?.username}`)
   }
 

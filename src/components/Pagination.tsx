@@ -22,8 +22,6 @@ const Pagination = ({
           <div
             className="page-link ng-binding"
             onClick={() => {
-              console.log(page)
-              console.log(10 * (page - 1))
               setOffset(10 * (page - 1))
             }}
           >

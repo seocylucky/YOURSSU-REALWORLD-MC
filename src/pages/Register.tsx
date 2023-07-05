@@ -47,7 +47,6 @@ const Register = () => {
         },
       })
       .then((res) => {
-        console.log(res)
         const cookie = new Cookies()
         const data = res.data.user
         const userData = {
@@ -66,7 +65,6 @@ const Register = () => {
         navigate('/')
       })
       .catch((err) => {
-        console.log(err)
         if (err.response.status === 422) {
           const errData = err.response.data.errors
           const errKey = Object.keys(errData)
